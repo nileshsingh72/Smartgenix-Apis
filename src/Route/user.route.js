@@ -1,5 +1,6 @@
 const express = require("express");
-const { userRegister, userSignin } = require("../Controller/user.controller");
+const { userRegister, userSignin, delUser } = require("../Controller/user.controller");
+const { adminAuth } = require("../Middlewares/admin.middleware");
 const { userModel } = require("../Model/user.model");
 
 const userRoute = express.Router();
@@ -15,4 +16,5 @@ userRoute.get("/", async (req, res) => {
 
 userRoute.post("/register", userRegister);
 userRoute.post("/login", userSignin);
+userRoute.delete("/user/:id", adminAuth , delUser );
 module.exports = { userRoute };

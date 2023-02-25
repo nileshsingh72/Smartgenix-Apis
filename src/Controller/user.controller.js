@@ -95,4 +95,22 @@ const userSignin = async (req, res) => {
   }
 };
 
-module.exports = { userRegister, userSignin };
+const delUser = async(req , res)=>{
+   const {id} = req.params;
+
+   try{
+     let user = await userModel.findByIdAndDelete(id);
+     res.send({
+      status:true,
+      message:'User deleted sucessfully'
+     })
+   }
+   catch(e){
+    res.send({
+      status:false,
+      message:e.message
+    })
+   }
+}
+
+module.exports = { userRegister, userSignin , delUser };
