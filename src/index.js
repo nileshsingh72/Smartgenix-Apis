@@ -5,12 +5,14 @@ const connectDB = require("./Config/db");
 const { userRoute } = require("./Route/user.route");
 const { productRoute } = require("./Route/product.route");
 const CartRoute = require("./Route/cart.route");
+const { orderRoute } = require("./Route/order.route");
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use("/user", userRoute);
 app.use("/product", productRoute);
 app.use("/cart", CartRoute);
+app.use("/order", orderRoute);
 app.get("/", (req, res) => {
   res.send("welcome to SmartGenix Server");
 });
