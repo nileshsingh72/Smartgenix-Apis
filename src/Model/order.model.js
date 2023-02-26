@@ -7,13 +7,19 @@ let orderItemSchema = new mongoose.Schema({
         required: true
     },
     orderData : {
-        type : Array
+        type : Array,
+        required: true
+
     },
     totalBill : {
-        type: Number
+        type: Number,
+        required: true
+
     },
     paymentMethod : {
     type : String,
+    required: true
+
    }, 
     packed : {
         type: Boolean,
