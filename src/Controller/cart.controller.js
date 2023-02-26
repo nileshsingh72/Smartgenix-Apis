@@ -1,4 +1,4 @@
-const cartModel = require("../model/cart.model");
+const cartModel = require("../Model/cart.model");
 
 // ### POST ITEM IN CART 
 const postItem = async(req, res) => {
