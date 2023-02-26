@@ -80,6 +80,7 @@ const deleteOrder = async(req , res)=>{
 
 //for admin use
 const packingSuccess = async(req , res)=>{
+    // order id 
     try{
 
         let findData = await orderModel.find({_id:req.params.id})
@@ -147,10 +148,10 @@ const deliverSuccess = async(req , res)=>{
                 to:findData[0].deliveredAddress.email,
                 from:'smartgenix7@gmail.com',
                 subject:'Order delivered Successfully',
-                html : `<h4>Hello ${findData[0].deliveredAddress.name}</h4><br /><br /><p>Your order from Smart Genix has been delivered successfull</p><br /><br />
-                        <p>Total bill : ${total}</p> <br />
-                        <p>OrderId : ${orderDatalist._id} </p><br /><br />
-                        <p>Thanks for choosing us ! </p>
+                html : `<h2>Hello ${findData[0].deliveredAddress.name}</h2><h4>Your order from Smart Genix has been delivered successfully !</h4> 
+                        <h4>Total bill : ${findData[0].totalBill}</h4>  
+                        <h4>OrderId : ${findData[0]._id} </h4> 
+                        <h4>Thanks for choosing us ! </h4>
                          `
             })
                 res.send({
@@ -177,28 +178,28 @@ const deliverSuccess = async(req , res)=>{
 //for user use
 const createOrder = async(req , res)=>{
     try{
-    let findData = await cartModel.find({userId:userId},{_id : 0 , __v : 0}).populate( 'productId' )
-        if(findData.length > 0){
+    let orderData = await cartModel.find({userId:req.body.userId},{_id : 0 , __v : 0}).populate( 'productId' )
+        if(orderData.length > 0){
               let total = 0;
     for (var i = 0; i < orderData.length; i++) {
       total += orderData[i].productId.price * orderData[i].quantity;
     }
   let orderDatalist= await orderModel.create({userId : req.body.userId,paymentMethod:req.body.paymentMethod, orderData : orderData , totalBill: total , deliveredAddress : req.body.address}); 
-                findData.forEach(async(ele)=>{
+  orderData.forEach(async(ele)=>{
                        await  productModel.findByIdAndUpdate(
                            ele.productId._id,
                         { quantity: ele.productId.quantity - ele.quantity }
                       )
                    })
-                await cartModel.deleteMany({userId:userId})
+                await cartModel.deleteMany({userId:req.body.userId})
                 transporter.sendMail({
                     to:req.body.address.email,
                     from:'smartgenix7@gmail.com',
                     subject:'Order Successfully Added',
-                    html : `<h4>Hello ${req.body.address.name}</h4><br /><br /><p>Your order from Smart Genix has been submited successfull</p><br /><br />
-                            <p>Total bill : ${total}</p> <br />
-                            <p>OrderId : ${orderDatalist._id} </p><br /><br />
-                            <p>Thanks for choosing us ! </p>
+                    html : `<h2>Hello ${req.body.address.name}</h2><h4>Your order from Smart Genix has been submited successfully !</h4>
+                            <h4>Total bill : ${total}</h4> 
+                            <h4>OrderId : ${orderDatalist._id} </h4> 
+                            <h4>Thanks for choosing us ! </h4>
                              `
                 })
                 res.send({
