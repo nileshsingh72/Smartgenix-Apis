@@ -5,6 +5,8 @@ const getItem = async (req, res) => {
   let { category, brand, min, max, sort, order, page, limit } = req.query;
   min = Number(min);
   max = Number(max);
+  limit = Number(limit);
+  page = Number(page);
   order = order === "asc" ? 1 : -1;
   try {
     let data = await productModel
