@@ -7,6 +7,7 @@ const { productRoute } = require("./Route/product.route");
 const CartRoute = require("./Route/cart.route");
 const { orderRoute } = require("./Route/order.route");
 const fbRoute = require("./Route/feedback.route");
+const productModel = require("./Model/product.model");
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -15,6 +16,7 @@ app.use("/product", productRoute);
 app.use("/cart", CartRoute);
 app.use("/order", orderRoute);
 app.use("/feedback", fbRoute);
+
 app.get("/", (req, res) => {
   res.send("welcome to SmartGenix Server");
 });
