@@ -312,9 +312,11 @@ const singleProd = async (req, res) => {
 
 const getSearchProduct = async (req, res) => {
   try {
-    let findData = await productModel.find({
-      title: { $regex: new RegExp(`${req.query.q}`), $options: "i" },
-    });
+    let findData = await productModel
+      .find({
+        title: { $regex: new RegExp(`${req.query.q}`), $options: "i" },
+      })
+      .limit(Number(req.query.limit));
 
     if (findData.length <= 0) {
       res.json({
@@ -322,6 +324,7 @@ const getSearchProduct = async (req, res) => {
         message: "No Data Available",
       });
     }
+
     res.json({
       status: false,
       data: findData,
