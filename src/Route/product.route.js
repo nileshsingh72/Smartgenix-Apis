@@ -8,9 +8,11 @@ const {
   updatePQ,
   updateProduct,
   singleProd,
+  getSearchProduct,
 } = require("../Controller/products.controller");
 const { adminAuth } = require("../Middlewares/admin.middleware");
 productRoute.get("/", getItem);
+productRoute.get("/search", getSearchProduct);
 productRoute.get("/:id", singleProd);
 productRoute.post("/create", adminAuth, createItem);
 productRoute.post("/createmany", adminAuth, createManyItems);
