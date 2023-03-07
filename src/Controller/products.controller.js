@@ -3,6 +3,7 @@ const productModel = require("../Model/product.model");
 const getItem = async (req, res) => {
   // filters
   let { category, brand, min, max, sort, order, page, limit } = req.query;
+  let totalPage = 0;
   min = Number(min);
   max = Number(max);
   limit = Number(limit);
@@ -15,11 +16,18 @@ const getItem = async (req, res) => {
       .limit(limit);
     if (category) {
       data = await productModel.aggregate([
+        { $match: { category } }])
+        totalPage = data.length;
+      data = await productModel.aggregate([
         { $match: { category } },
         { $skip: (page - 1) * limit },
         { $limit: limit },
       ]);
       if (brand) {
+        data =  data = await productModel.aggregate([
+          { $match: { category } },
+          { $match: { brand: brand } }])
+        totalPage = data.length;
         data = await productModel.aggregate([
           { $match: { category } },
           { $match: { brand: brand } },
@@ -27,6 +35,12 @@ const getItem = async (req, res) => {
           { $limit: limit },
         ]);
         if (min) {
+            data =  data = await productModel.aggregate([
+          { $match: { category } },
+          { $match: { brand: brand } },
+          { $match: { price: { $gte: min } } }
+        ])
+        totalPage = data.length;
           data = await productModel.aggregate([
             { $match: { category } },
             { $match: { brand: brand } },
@@ -35,6 +49,15 @@ const getItem = async (req, res) => {
             { $limit: limit },
           ]);
           if (sort) {
+          data =  data = await productModel.aggregate([
+          { $match: { category } },
+            { $match: { brand: brand } },
+             { $match: { price: { $gte: min } } },
+              {
+                $sort: sort === "price" ? { price: order } : { rating: order },
+              }
+        ])
+        totalPage = data.length;
             data = await productModel.aggregate([
               { $match: { category: category } },
               { $match: { brand: brand } },
@@ -47,6 +70,13 @@ const getItem = async (req, res) => {
             ]);
           }
           if (max) {
+              data =  data = await productModel.aggregate([
+          { $match: { category } },
+            { $match: { brand: brand } },
+             { $match: { price: { $gte: min } } },
+              { $match: { price: { $lte: max } } }
+        ])
+        totalPage = data.length;
             data = await productModel.aggregate([
               { $match: { category: category } },
               { $match: { brand: brand } },
@@ -56,6 +86,17 @@ const getItem = async (req, res) => {
               { $limit: limit },
             ]);
             if (sort) {
+                data =  data = await productModel.aggregate([
+          { $match: { category } },
+            { $match: { brand: brand } },
+             { $match: { price: { $gte: min } } },
+                { $match: { price: { $lte: max } } },
+                {
+                  $sort:
+                    sort === "price" ? { price: order } : { rating: order },
+                }
+        ])
+        totalPage = data.length;
               data = await productModel.aggregate([
                 { $match: { category: category } },
                 { $match: { brand: brand } },
@@ -72,6 +113,12 @@ const getItem = async (req, res) => {
           }
         }
         if (max && !min) {
+               data =  data = await productModel.aggregate([
+          { $match: { category } },
+            { $match: { brand: brand } },
+             { $match: { price: { $lte: max } } },
+        ])
+        totalPage = data.length;
           data = await productModel.aggregate([
             { $match: { category } },
             { $match: { brand: brand } },
@@ -80,6 +127,15 @@ const getItem = async (req, res) => {
             { $limit: limit },
           ]);
           if (sort) {
+             data =  data = await productModel.aggregate([
+          { $match: { category } },
+            { $match: { brand: brand } },
+             { $match: { price: { $lte: max } } },
+              {
+                $sort: sort === "price" ? { price: order } : { rating: order },
+              }
+        ])
+        totalPage = data.length;
             data = await productModel.aggregate([
               { $match: { category: category } },
               { $match: { brand: brand } },
@@ -93,6 +149,12 @@ const getItem = async (req, res) => {
           }
         }
         if (sort && !min && !max) {
+            data =  data = await productModel.aggregate([
+          { $match: { category } },
+            { $match: { brand: brand } },
+            { $sort: sort === "price" ? { price: order } : { rating: order } }
+        ])
+        totalPage = data.length;
           data = await productModel.aggregate([
             { $match: { category: category } },
             { $match: { brand: brand } },
@@ -103,6 +165,11 @@ const getItem = async (req, res) => {
         }
       } else {
         if (min) {
+            data =  data = await productModel.aggregate([
+          { $match: { category } },
+            { $match: { price: { $gte: min } } },
+        ])
+        totalPage = data.length;
           data = await productModel.aggregate([
             { $match: { category } },
             { $match: { price: { $gte: min } } },
@@ -110,6 +177,14 @@ const getItem = async (req, res) => {
             { $limit: limit },
           ]);
           if (sort) {
+             data =  data = await productModel.aggregate([
+          { $match: { category } },
+           { $match: { price: { $gte: min } } },
+              {
+                $sort: sort === "price" ? { price: order } : { rating: order },
+              }
+        ])
+        totalPage = data.length;
             data = await productModel.aggregate([
               { $match: { category: category } },
               { $match: { price: { $gte: min } } },
@@ -121,6 +196,12 @@ const getItem = async (req, res) => {
             ]);
           }
           if (max) {
+                 data =  data = await productModel.aggregate([
+          { $match: { category } },
+           { $match: { price: { $gte: min } } },
+              { $match: { price: { $lte: max } } },
+        ])
+        totalPage = data.length;
             data = await productModel.aggregate([
               { $match: { category: category } },
               { $match: { price: { $gte: min } } },
@@ -129,6 +210,16 @@ const getItem = async (req, res) => {
               { $limit: limit },
             ]);
             if (sort) {
+                     data =  data = await productModel.aggregate([
+          { $match: { category } },
+           { $match: { price: { $gte: min } } },
+                { $match: { price: { $lte: max } } },
+                {
+                  $sort:
+                    sort === "price" ? { price: order } : { rating: order },
+                },
+        ])
+        totalPage = data.length;
               data = await productModel.aggregate([
                 { $match: { category: category } },
                 { $match: { price: { $gte: min } } },
@@ -144,6 +235,11 @@ const getItem = async (req, res) => {
           }
         }
         if (max && !min) {
+                  data =  data = await productModel.aggregate([
+          { $match: { category } },
+          { $match: { price: { $lte: max } } },
+        ])
+        totalPage = data.length;
           data = await productModel.aggregate([
             { $match: { category } },
             { $match: { price: { $lte: max } } },
@@ -151,6 +247,14 @@ const getItem = async (req, res) => {
             { $limit: limit },
           ]);
           if (sort) {
+                     data =  data = await productModel.aggregate([
+          { $match: { category } },
+          { $match: { price: { $lte: max } } },
+              {
+                $sort: sort === "price" ? { price: order } : { rating: order },
+              },
+        ])
+        totalPage = data.length;
             data = await productModel.aggregate([
               { $match: { category: category } },
               { $match: { price: { $lte: max } } },
@@ -163,6 +267,11 @@ const getItem = async (req, res) => {
           }
         }
         if (sort && !min && !max) {
+                   data =  data = await productModel.aggregate([
+          { $match: { category } },
+          { $sort: sort === "price" ? { price: order } : { rating: order } },
+        ])
+        totalPage = data.length;
           data = await productModel.aggregate([
             { $match: { category: category } },
             { $sort: sort === "price" ? { price: order } : { rating: order } },
@@ -172,7 +281,7 @@ const getItem = async (req, res) => {
         }
       }
     }
-    res.json({ status: true, data });
+    res.json({ status: true, data , totalPage });
   } catch (error) {
     res.json({ status: false, message: error.message });
   }
