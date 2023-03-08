@@ -27,6 +27,7 @@ const productSchema = new Schema(
     discount: { type: String },
     badgeText: { type: String },
     title: { type: String },
+    _id : {type :String}
   },
   {
     versionKey: false,
